@@ -9,15 +9,22 @@
     :accessor pos)
    (delimiter
     :initform "\\s+"
-    :accessor delimiter)))
+    :accessor delimiter)
+   (text-length
+    :initform nil
+    :accessor scanner-length)))
 
+(defmethod text-length ((scanner scanner))
+  (or (scanner-length scanner)
+      (setf (scanner-length scanner)
+            (length (text scanner)))))
 
 (defmethod next ((scanner scanner) &key (delimiter (delimiter scanner)))
   (multiple-value-bind (start-delim end-delim)
       (cl-ppcre:scan delimiter (text scanner) :start (pos scanner))
-    (when (or start-delim (< (pos scanner) (length (text scanner))))
+    (when (or start-delim (< (pos scanner) (text-length scanner)))
       (let ((token (subseq (text scanner) (pos scanner) start-delim)))
-        (setf (pos scanner) (or end-delim (length (text scanner))))
+        (setf (pos scanner) (or end-delim (text-length scanner)))
         token))))
 
 (defmethod next-pattern ((scanner scanner) pattern &key (delimiter (delimiter scanner)))
@@ -47,7 +54,7 @@
 
 (defmethod has-next-pattern ((scanner scanner) pattern &key (delimiter (delimiter scanner)))
   (with-previous-position (scanner)
-    (next-pattern scanner pattern)))
+    (next-pattern scanner pattern :delimiter delimiter)))
 
 (defmethod has-next-int ((scanner scanner) &key (delimiter (delimiter scanner)))
   (handler-case
