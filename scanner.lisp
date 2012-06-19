@@ -12,9 +12,7 @@
     :accessor delimiter)))
 
 
-(defmethod next ((scanner scanner) &optional delimiter)
-  (unless delimiter
-    (setf delimiter (delimiter scanner)))
+(defmethod next ((scanner scanner) &key pattern (delimiter (delimiter scanner)))
   (multiple-value-bind (start-delim end-delim)
       (cl-ppcre:scan delimiter (text scanner) :start (pos scanner))
     (when (or start-delim (< (pos scanner) (length (text scanner))))
@@ -26,14 +24,14 @@
   (parse-integer (next scanner)))
 
 (defmethod next-line ((scanner scanner))
-  (next scanner (format nil "~%")))
+  (next scanner :delimiter (format nil "~%")))
 
 (defmethod reset ((scanner scanner))
   (setf (pos scanner) 0))
 
-(defmethod has-next ((scanner scanner))
+(defmethod has-next ((scanner scanner) &key (delimiter (delimiter scanner)))
   (with-previous-position (scanner)
-    (let ((next (next scanner)))
+    (let ((next (next scanner :delimiter delimiter)))
       (unless (equal next "")
         next))))
 

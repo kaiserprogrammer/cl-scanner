@@ -29,6 +29,19 @@
     (is (has-next-int scanner))
     (is (= 10 (next-int scanner)))))
 
+(test next-delimiter
+  (let ((scanner (scan "abc abd,10 abe")))
+    (is (equal "abc" (next scanner)))
+    (is (equal "abd" (next scanner :delimiter ",")))
+    (is (equal "10" (next scanner)))
+    (is (equal "abe" (next scanner)))))
+
+(test has-next-delimiter
+  (let ((scanner (scan "abc abd,10 abe")))
+    (is (equal "abc" (has-next scanner)))
+    (is (equal "abc abd" (has-next scanner :delimiter ",")))
+    (is (equal "abc" (next scanner)))))
+
 (test scan-with-context
   (let ((data
          "begin 2005 04 02 1043 meeting Smith, John
