@@ -13,12 +13,23 @@
 
 
 (defmethod next ((scanner scanner) &key pattern (delimiter (delimiter scanner)))
-  (multiple-value-bind (start-delim end-delim)
-      (cl-ppcre:scan delimiter (text scanner) :start (pos scanner))
-    (when (or start-delim (< (pos scanner) (length (text scanner))))
-      (let ((token (subseq (text scanner) (pos scanner) start-delim)))
-        (setf (pos scanner) end-delim)
-        token))))
+  (if pattern
+      (multiple-value-bind (start-pattern end-pattern)
+          (cl-ppcre:scan pattern (text scanner) :start (pos scanner))
+        (when start-pattern
+         (let ((token (subseq (text scanner) start-pattern end-pattern)))
+           (setf (pos scanner) end-pattern)
+           (multiple-value-bind (start-delim end-delim)
+               (cl-ppcre:scan delimiter (text scanner) :start (pos scanner))
+             (when (and start-delim (= start-delim (pos scanner)))
+               (setf (pos scanner) end-delim)))
+           token)))
+   (multiple-value-bind (start-delim end-delim)
+       (cl-ppcre:scan delimiter (text scanner) :start (pos scanner))
+     (when (or start-delim (< (pos scanner) (length (text scanner))))
+       (let ((token (subseq (text scanner) (pos scanner) start-delim)))
+         (setf (pos scanner) (or end-delim (length (text scanner))))
+         token)))))
 
 (defmethod next-int ((scanner scanner))
   (parse-integer (next scanner)))
