@@ -29,3 +29,14 @@
 
 (defmethod reset ((scanner scanner))
   (setf (pos scanner) 0))
+
+(defmethod has-next ((scanner scanner))
+  (let ((previous-position (pos scanner)))
+    (let ((next (next scanner)))
+      (setf (pos scanner) previous-position)
+      (if (equal next "")
+          nil
+          t))))
+
+(defun scan (text)
+  (make-instance 'scanner :text text))

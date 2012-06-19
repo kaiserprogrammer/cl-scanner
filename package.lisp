@@ -6,4 +6,6 @@
    :next-int
    :next-line
    :reset
-   :delimiter))
+   :delimiter
+   :scan
+   :has-next))

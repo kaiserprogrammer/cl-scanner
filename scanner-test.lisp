@@ -5,6 +5,22 @@
 (def-suite scanner)
 (in-suite scanner)
 
+(test no-text
+  (let ((scanner (scan "")))
+    (is (equal "" (next scanner)))))
+
+(test no-next-left
+  (let ((scanner (scan "abc ")))
+    (is (equal "abc" (next scanner)))
+    (is (equal "" (next scanner)))))
+
+(test has-next
+  (let ((scanner (scan "abc abd")))
+    (is (equal t (has-next scanner)))
+    (is (equal "abc" (next scanner)))
+    (is (equal t (has-next scanner)))
+    (is (equal "abd" (next scanner)))))
+
 (test scan-with-context
   (let ((data
          "begin 2005 04 02 1043 meeting Smith, John
@@ -12,7 +28,7 @@ end 2005 04 02 1204 Smith, John
 begin 2005,04,02 1300 work Eubanks, Brian
 end 2005 04 02 2120 Eubanks, Brian
 alarm 2005 06 02 2301 At the beginning"))
-    (let ((scanner (make-instance 'scanner :text data)))
+    (let ((scanner (scan data)))
       (is (equal "begin" (next scanner)))
       (is (= 2005 (next-int scanner)))
       (is (= 4 (next-int scanner)))
