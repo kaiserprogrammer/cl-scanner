@@ -71,6 +71,11 @@
     (is (equal "abc abd,10" (next-pattern scanner "\\w+ \\w+,\\d+")))
     (is (equal nil (next-pattern scanner "\\w+")))))
 
+(test has-next-pattern
+  (let ((scanner (scan "abc abd,10")))
+    (is (equal "abc abd" (has-next-pattern scanner "\\w+ \\w+")))
+    (is (equal "abc abd" (has-next-pattern scanner "\\w+ \\w+" :delimiter ",")))))
+
 (test scan-with-context
   (let ((data
          "begin 2005 04 02 1043 meeting Smith, John

@@ -43,15 +43,16 @@
 
 (defmethod has-next ((scanner scanner) &key (delimiter (delimiter scanner)))
   (with-previous-position (scanner)
-    (let ((next (next scanner :delimiter delimiter)))
-      (unless (equal next "")
-        next))))
+    (next scanner :delimiter delimiter)))
 
-(defmethod has-next-int ((scanner scanner))
+(defmethod has-next-pattern ((scanner scanner) pattern &key (delimiter (delimiter scanner)))
   (with-previous-position (scanner)
-    (handler-case
-        (next-int scanner)
-      (sb-int:simple-parse-error () nil))))
+    (next-pattern scanner pattern)))
+
+(defmethod has-next-int ((scanner scanner) &key (delimiter (delimiter scanner)))
+  (handler-case
+      (parse-integer (has-next scanner :delimiter delimiter))
+    (sb-int:simple-parse-error () nil)))
 
 (defmacro with-previous-position ((scanner) &body body)
   (with-gensyms (scanner-sym)

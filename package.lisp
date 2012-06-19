@@ -10,4 +10,5 @@
    :scan
    :has-next
    :has-next-int
-   :next-pattern))
+   :next-pattern
+   :has-next-pattern))
