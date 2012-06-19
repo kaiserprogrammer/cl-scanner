@@ -9,4 +9,5 @@
    :delimiter
    :scan
    :has-next
-   :has-next-int))
+   :has-next-int
+   :next-pattern))

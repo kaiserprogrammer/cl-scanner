@@ -49,26 +49,27 @@
 
 (test next-pattern
   (let ((scanner (scan "abc abd,10 abe")))
-    (is (equal "abc abd" (next scanner :pattern "\\w+ \\w+")))
+    (is (equal "abc abd" (next-pattern scanner "\\w+ \\w+")))
     (is (equal ",10" (next scanner)))
     (is (equal "abe" (next scanner)))))
 
 (test next-pattern-with-delimiter
   (let ((scanner (scan "abc abd,10 abe")))
-    (is (equal "abc abd" (next scanner :pattern "\\w+ \\w+" :delimiter ",")))
+    (is (equal "abc abd" (next-pattern scanner "\\w+ \\w+" :delimiter ",")))
     (is (equal "10" (next scanner)))))
 
 (test next-pattern-does-not-match
-  (let ((scanner (scan "abc")))))
+  (let ((scanner (scan "abc")))
+    (is (equal nil (next-pattern scanner "\\d+")))))
 
 (test next-pattern-without-spaces
   (let ((scanner (scan "abc abd,10")))
-    (is (equal "abc abd" (next scanner :pattern "\\w+ \\w+")))))
+    (is (equal "abc abd" (next-pattern scanner "\\w+ \\w+")))))
 
 (test next-pattern-reaches-end
   (let ((scanner (scan "abc abd,10")))
-    (is (equal "abc abd,10" (next scanner :pattern "\\w+ \\w+,\\d+")))
-    (is (equal nil (next scanner :pattern "\\w+")))))
+    (is (equal "abc abd,10" (next-pattern scanner "\\w+ \\w+,\\d+")))
+    (is (equal nil (next-pattern scanner "\\w+")))))
 
 (test scan-with-context
   (let ((data
