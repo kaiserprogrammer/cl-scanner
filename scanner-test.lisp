@@ -7,19 +7,27 @@
 
 (test no-text
   (let ((scanner (scan "")))
-    (is (equal "" (next scanner)))))
+    (is (equal nil (next scanner)))
+    (is (equal nil (next scanner)))))
 
 (test no-next-left
   (let ((scanner (scan "abc ")))
     (is (equal "abc" (next scanner)))
-    (is (equal "" (next scanner)))))
+    (is (equal nil (next scanner)))))
 
 (test has-next
   (let ((scanner (scan "abc abd")))
-    (is (equal t (has-next scanner)))
+    (is (equal "abc" (has-next scanner)))
     (is (equal "abc" (next scanner)))
-    (is (equal t (has-next scanner)))
+    (is (equal "abd" (has-next scanner)))
     (is (equal "abd" (next scanner)))))
+
+(test has-next-int
+  (let ((scanner (scan "abc 10")))
+    (is (not (has-next-int scanner)))
+    (is (equal "abc" (next scanner)))
+    (is (has-next-int scanner))
+    (is (= 10 (next-int scanner)))))
 
 (test scan-with-context
   (let ((data

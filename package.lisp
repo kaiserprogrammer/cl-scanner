@@ -1,5 +1,5 @@
 (defpackage :scanner
-  (:use :cl)
+  (:use :cl :alexandria)
   (:export
    :scanner
    :next
@@ -8,4 +8,5 @@
    :reset
    :delimiter
    :scan
-   :has-next))
+   :has-next
+   :has-next-int))
